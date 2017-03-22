@@ -25,7 +25,6 @@ class EduSelectCourseProjectWizard extends AbstractProjectWizard {
     }
 
     protected void init() {
-        myWizardContext.setNewWizard(true);
         myWizardContext.setModulesProvider(ModulesProvider.EMPTY_MODULES_PROVIDER);
         MyChooseCourseStep step = new MyChooseCourseStep();
         mySequence.addCommonStep(step);
