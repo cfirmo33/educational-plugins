@@ -31,11 +31,25 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   static final String LEGACY_TESTS_KT = "tests.kt";
   static final String TESTS_KT = "Tests.kt";
   private EduKotlinCourseProjectGenerator myProjectGenerator = new EduKotlinCourseProjectGenerator();
+  private static final String TASK_KT = "Task.kt";
 
   @NotNull
   @Override
   public String getTestFileName() {
     return TESTS_KT;
+  }
+
+  @NotNull
+  @Override
+  public String getTaskFileName() {
+    return TASK_KT;
+  }
+
+  @NotNull
+  @Override
+  public String getStepikDefaultLanguage() {
+    //set up when we will have adaptive course
+    return "";
   }
 
   @Override

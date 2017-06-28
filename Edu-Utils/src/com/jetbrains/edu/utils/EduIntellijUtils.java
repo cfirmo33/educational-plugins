@@ -23,11 +23,11 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PathUtil;
 import com.intellij.util.io.ZipUtil;
-import com.jetbrains.edu.coursecreator.settings.CCSettings;
-import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.utils.generation.EduTaskModuleBuilder;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +38,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+
+import static com.jetbrains.edu.learning.StudyUtils.createFromTemplate;
 
 
 public class EduIntellijUtils {
@@ -148,8 +150,18 @@ public class EduIntellijUtils {
             if (psiDirectory == null) {
               return;
             }
-            createIfNotNull(project, psiDirectory, taskFileName, view);
-            createIfNotNull(project, psiDirectory, testFileName, view);
+
+            if (taskFileName == null) {
+              return;
+            }
+
+            if (course.isAdaptive()) {
+              createFromText(project, taskFileName, task);
+            }
+            else {
+              createFromTemplate(project, psiDirectory, taskFileName, view, false);
+              createFromTemplate(project, psiDirectory, taskFileName, view, false);
+            }
           }
         };
       }
@@ -157,11 +169,19 @@ public class EduIntellijUtils {
     return parentDirectory.findSubdirectory(EduNames.LESSON + task.getLesson().getIndex() + "-" + EduNames.TASK + task.getIndex());
   }
 
-  private static void createIfNotNull(@NotNull Project project, @NotNull PsiDirectory psiDirectory, @Nullable String fileName, @Nullable IdeView view) {
-    if (fileName != null) {
-      StudyUtils.createFromTemplate(project, psiDirectory, fileName, view, false);
+  private static void createFromText(@NotNull Project project, @Nullable String taskFileName, @NotNull Task task) {
+    TaskFile taskFile = task.getTaskFile(taskFileName);
+    VirtualFile taskDir = task.getTaskDir(project);
+    if (taskFile != null && taskFile.text != null && !taskFile.text.isEmpty() && taskDir != null) {
+      try {
+        StudyGenerator.createTaskFile(taskDir, taskFile);
+      }
+      catch (IOException e) {
+        LOG.warn(e.getMessage());
+      }
     }
   }
+
   public static void addJUnit(Module baseModule) {
     ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
     List<String> defaultRoots = descriptor.getLibraryClassesRoots();
