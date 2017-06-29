@@ -74,7 +74,7 @@ public class EduJavaDirectoryProjectGenerator implements DirectoryProjectGenerat
 
   private void setSdk(@NotNull Project project) {
     final ProjectSdksModel projectJdksModel = ProjectStructureConfigurable.getInstance(project).getProjectJdksModel();
-    if (!projectJdksModel.isInitialized()) { //should be initialized
+    if (!projectJdksModel.isInitialized()) {
       projectJdksModel.reset(project);
     }
     final Collection<Sdk> projectSdks = projectJdksModel.getProjectSdks().values();
