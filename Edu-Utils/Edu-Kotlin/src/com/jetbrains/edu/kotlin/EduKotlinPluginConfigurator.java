@@ -41,12 +41,6 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
   @NotNull
   @Override
-  public String getTaskFileName() {
-    return TASK_KT;
-  }
-
-  @NotNull
-  @Override
   public String getStepikDefaultLanguage() {
     //set up when we will have adaptive course
     return "";
@@ -85,7 +79,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public PsiDirectory createTaskContent(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
-    return EduIntellijUtils.createTask(project, task, view, parentDirectory, "Task.kt", TESTS_KT);
+    return EduIntellijUtils.createTask(project, task, view, parentDirectory, getTaskFileName(), TESTS_KT);
   }
 
   @Override

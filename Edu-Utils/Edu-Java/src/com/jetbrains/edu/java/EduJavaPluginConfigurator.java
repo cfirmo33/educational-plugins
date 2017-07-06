@@ -22,17 +22,12 @@ import org.jetbrains.annotations.Nullable;
 public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   static final String TEST_JAVA = "Test.java";
   private static final String TASK_JAVA = "Task.java";
+  private final EduJavaCourseProjectGenerator myProjectGenerator = new EduJavaCourseProjectGenerator();
 
   @NotNull
   @Override
   public String getTestFileName() {
     return TEST_JAVA;
-  }
-
-  @NotNull
-  @Override
-  public String getTaskFileName() {
-    return TASK_JAVA;
   }
 
   @NotNull
@@ -81,6 +76,6 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public EduCourseProjectGenerator getEduCourseProjectGenerator() {
-    return new EduJavaCourseProjectGenerator();
+    return myProjectGenerator;
   }
 }
