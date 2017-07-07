@@ -5,10 +5,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.DefaultLogger;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.JavaSdkType;
-import com.intellij.openapi.projectRoots.JavaSdkVersion;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -20,8 +20,12 @@ import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.ui.ComboboxWithBrowseButton;
+import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
+import com.jetbrains.edu.learning.stepic.EduStepicConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,6 +57,14 @@ public abstract class EduIntellijCourseProjectGeneratorBase implements EduCourse
 
   @Override
   public boolean beforeProjectGenerated() {
+    if (myCourse == null || !(myCourse instanceof RemoteCourse)) return true;
+    if (((RemoteCourse)myCourse).getId() > 0) {
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+        return StudyUtils.execCancelable(() -> EduStepicConnector.enrollToCourse(((RemoteCourse)myCourse).getId(),
+                StudySettings.getInstance().getUser()));
+      }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
+    }
     return true;
   }
 
