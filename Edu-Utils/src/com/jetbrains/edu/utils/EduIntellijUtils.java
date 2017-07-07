@@ -172,7 +172,8 @@ public class EduIntellijUtils {
   private static void createFromText(@NotNull Project project, @Nullable String taskFileName, @NotNull Task task) {
     TaskFile taskFile = task.getTaskFile(taskFileName);
     VirtualFile taskDir = task.getTaskDir(project);
-    if (taskFile != null && taskFile.text != null && !taskFile.text.isEmpty() && taskDir != null) {
+    if (taskFile != null && taskDir != null) {
+      taskFile.text = com.intellij.openapi.util.text.StringUtil.notNullize(taskFile.text);
       try {
         StudyGenerator.createTaskFile(taskDir, taskFile);
       }
