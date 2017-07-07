@@ -79,7 +79,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public PsiDirectory createTaskContent(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
-    return EduIntellijUtils.createTask(project, task, view, parentDirectory, getTaskFileName(), TESTS_KT);
+    return EduIntellijUtils.createTask(project, task, view, parentDirectory, TASK_KT, TESTS_KT);
   }
 
   @Override
