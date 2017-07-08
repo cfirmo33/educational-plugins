@@ -6,10 +6,12 @@ import com.intellij.ide.IdeView;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard;
 import com.intellij.ide.util.newProjectWizard.StepSequence;
 import com.intellij.ide.util.projectWizard.ProjectBuilder;
+import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -19,8 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
 import com.intellij.util.PathUtil;
 import com.intellij.util.io.ZipUtil;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -174,6 +175,8 @@ public class EduIntellijUtils {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskFile != null && taskDir != null) {
       taskFile.text = com.intellij.openapi.util.text.StringUtil.notNullize(taskFile.text);
+      nameTaskFileAfterContainingClass(task, taskFile, project);
+
       try {
         StudyGenerator.createTaskFile(taskDir, taskFile);
       }
@@ -181,6 +184,34 @@ public class EduIntellijUtils {
         LOG.warn(e.getMessage());
       }
     }
+  }
+
+  public static void nameTaskFileAfterContainingClass(@NotNull Task task,
+                                                      @NotNull TaskFile taskFile,
+                                                      @NotNull Project project) {
+    Language language = task.getLesson().getCourse().getLanguageById();
+    if (language.getAssociatedFileType() == null) {
+      LOG.warn("Cannot rename task file. Unable to find associated file type for language: " + language.getID());
+      return;
+    }
+    task.getTaskFiles().remove(taskFile.name);
+    taskFile.name = publicClassName(project, taskFile) + "." + language.getAssociatedFileType().getDefaultExtension();
+    task.taskFiles.put(taskFile.name, taskFile);
+  }
+
+  @NotNull
+  private static String publicClassName(@NotNull Project project, @NotNull TaskFile taskFile) {
+    String fileName = "Main";
+    PsiJavaFile fileFromText = (PsiJavaFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.java", JavaFileType.INSTANCE, taskFile.text);
+    PsiClass[] classes = fileFromText.getClasses();
+    for (PsiClass aClass : classes) {
+      boolean isPublic = aClass.hasModifierProperty(PsiModifier.PUBLIC);
+      if (isPublic && aClass.getName() != null) {
+        fileName = aClass.getName();
+        break;
+      }
+    }
+    return fileName;
   }
 
   public static void addJUnit(Module baseModule) {
