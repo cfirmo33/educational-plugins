@@ -20,6 +20,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.PathUtil;
@@ -174,7 +175,7 @@ public class EduIntellijUtils {
     TaskFile taskFile = task.getTaskFile(taskFileName);
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskFile != null && taskDir != null) {
-      taskFile.text = com.intellij.openapi.util.text.StringUtil.notNullize(taskFile.text);
+      taskFile.text = StringUtil.notNullize(taskFile.text);
       nameTaskFileAfterContainingClass(task, taskFile, project);
 
       try {
