@@ -39,13 +39,6 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
     return TESTS_KT;
   }
 
-  @NotNull
-  @Override
-  public String getStepikDefaultLanguage() {
-    //set up when we will have adaptive course
-    return "";
-  }
-
   @Override
   public boolean isTestFile(VirtualFile file) {
     String name = file.getName();
