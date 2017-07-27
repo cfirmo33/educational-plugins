@@ -205,7 +205,7 @@ public class EduIntellijUtils {
   @NotNull
   private static String publicClassName(@NotNull Project project, @NotNull TaskFile taskFile) {
     String fileName = "Main";
-    PsiJavaFile fileFromText = (PsiJavaFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.java", JavaFileType.INSTANCE, taskFile.text);
+    PsiClassOwner fileFromText = (PsiClassOwner) PsiFileFactory.getInstance(project).createFileFromText(taskFile.name, JavaFileType.INSTANCE, taskFile.text);
     PsiClass[] classes = fileFromText.getClasses();
     for (PsiClass aClass : classes) {
       boolean isPublic = aClass.hasModifierProperty(PsiModifier.PUBLIC);
